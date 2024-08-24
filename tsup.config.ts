@@ -5,9 +5,11 @@ export default defineConfig({
   outDir: "./dist",
   splitting: true,
   sourcemap: true,
-  dts: false,
+  dts: true,
   format: ["esm"],
   bundle: true,
   treeshake: true,
   clean: true,
+  minifyWhitespace: true,
+  minifySyntax: true,
 });
