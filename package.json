@@ -1,0 +1,32 @@
+{
+  "name": "@burmajs/bmark",
+  "version": "0.1.0",
+  "description": "Markdown parser base on showdown js",
+  "type": "module",
+  "scripts": {
+    "check": "biome check --write src ",
+    "format": "biome format --write src ",
+    "lint": "biome lint --write src",
+    "build": "tsup"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/burmajs/bmark.git"
+  },
+  "keywords": [
+    "Markdown",
+    "Showdown"
+  ],
+  "author": "Pho Thin Maung",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/burmajs/bmark/issues"
+  },
+  "homepage": "https://github.com/burmajs/bmark#readme",
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@types/node": "^22.5.0",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
+  }
+}
