@@ -1,0 +1,45 @@
+import { getDefaultOptions, setAllOptionsTrue } from "./options.js";
+import type { FlavorOptions, BmarkOptions } from "../types.js";
+
+export const flavor: FlavorOptions = {
+  github: {
+    omitExtraWLInCodeBlocks: true,
+    simplifiedAutoLink: true,
+    literalMidWordUnderscores: true,
+    strikethrough: true,
+    tables: true,
+    tablesHeaderId: true,
+    ghCodeBlocks: true,
+    tasklists: true,
+    disableForced4SpacesIndentedSublists: true,
+    simpleLineBreaks: true,
+    requireSpaceBeforeHeadingText: true,
+    ghCompatibleHeaderId: true,
+    ghMentions: true,
+    backslashEscapesHTMLTags: true,
+    emoji: true,
+    splitAdjacentBlockquotes: true,
+  },
+  original: {
+    noHeaderId: true,
+    ghCodeBlocks: false,
+  },
+  ghost: {
+    omitExtraWLInCodeBlocks: true,
+    parseImgDimensions: true,
+    simplifiedAutoLink: true,
+    literalMidWordUnderscores: true,
+    strikethrough: true,
+    tables: true,
+    tablesHeaderId: true,
+    ghCodeBlocks: true,
+    tasklists: true,
+    smoothLivePreview: true,
+    simpleLineBreaks: true,
+    requireSpaceBeforeHeadingText: true,
+    ghMentions: false,
+    encodeEmails: true,
+  },
+  vanilla: getDefaultOptions(true) as BmarkOptions,
+  allTrue: setAllOptionsTrue(),
+};

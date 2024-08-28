@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.js"],
+  entry: ["src/index.ts"],
   outDir: "./dist",
   splitting: true,
   sourcemap: true,
@@ -10,6 +10,4 @@ export default defineConfig({
   bundle: true,
   treeshake: true,
   clean: true,
-  minifyWhitespace: true,
-  minifySyntax: true,
 });
