@@ -15,7 +15,8 @@
         "noExplicitAny": "off"
       },
       "style": {
-        "useShorthandFunctionType": "off"
+        "useShorthandFunctionType": "off",
+        "noParameterAssign": "off"
       }
     }
   },

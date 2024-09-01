@@ -15,7 +15,9 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "emitDeclarationOnly": false
+    "resolvePackageJsonExports": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "dist"
   },
   "exclude": [
     "node_modules/**/*",
@@ -24,5 +26,5 @@
     "lib/opt/**/*",
     "jsr/**/*"
   ],
-  "include": ["opt/**/*"]
+  "include": ["src/*"]
 }
