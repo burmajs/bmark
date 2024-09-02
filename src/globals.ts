@@ -1,11 +1,13 @@
 import { Converter } from "./converter.js";
-export type Obj = {};
+import { type ShowdownExtension } from "./extensions.js";
 export type GlobalConverter = {
   converter?: Converter;
-  gHtmlBlocks: any[];
+  gDimensions: { [key: string]: { width: number; height: number } }
+  gHtmlBlocks: string[];
   gHtmlSpans: string[];
+  gHtmlMdBlocks?: string[];
   metadata: {
-    parsed: any;
+    parsed: { [key: string]: string };
     raw: string;
     format: string;
   };
@@ -13,4 +15,10 @@ export type GlobalConverter = {
     codeblock?: string | undefined;
     text?: string | undefined;
   }>;
+  gUrls: { [key: string]: string };
+  gTitles: { [key: string]: string };
+  hashLinkCounts: { [key: string]: string | number };
+  gListLevel?: number;
+  langExtensions?: ShowdownExtension[];
+  outputModifiers?: ShowdownExtension[];
 };
