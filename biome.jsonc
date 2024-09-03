@@ -12,7 +12,8 @@
       },
       "suspicious": {
         "noConfusingVoidType": "off",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noPrototypeBuiltins": "off"
       },
       "style": {
         "useShorthandFunctionType": "off",

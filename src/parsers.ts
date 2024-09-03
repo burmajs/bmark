@@ -11,7 +11,7 @@ function hashElement(
   options: ConverterOptions,
   globals: GlobalConverter
 ): (wholeMatch: string, m1: string) => string {
-  return function (wholeMatch: string, m1: string){
+  return function (wholeMatch: string, m1: string) {
     var blockText = m1;
 
     // Undo double lines
@@ -2172,9 +2172,9 @@ function lists(
     // attacklab: add sentinel to emulate \z
     listStr += "¨0";
 
-    var rgx =
-        /(\n)?(^ {0,3})([*+-]|\d+[.])[ \t]+((\[([xX ])])?[ \t]*[^\r]+?(\n{1,2}))(?=\n*(¨0| {0,3}([*+-]|\d+[.])[ \t]+))/gm,
-      isParagraphed = /\n[ \t]*\n(?!¨0)/.test(listStr);
+    let rgx =
+      /(\n)?(^ {0,3})([*+-]|\d+[.])[ \t]+((\[([xX ])])?[ \t]*[^\r]+?(\n{1,2}))(?=\n*(¨0| {0,3}([*+-]|\d+[.])[ \t]+))/gm;
+    const isParagraphed = /\n[ \t]*\n(?!¨0)/.test(listStr);
 
     // Since version 1.5, nesting sublists requires 4 spaces (or 1 tab) indentation,
     // which is a syntax breaking change
@@ -2203,7 +2203,7 @@ function lists(
           bulletStyle += '" style="list-style-type: none;"';
 
           item = item.replace(/^[ \t]*\[([xX ])?]/m, function () {
-            var otp =
+            let otp =
               '<input type="checkbox" disabled style="margin: 0px 0.35em 0.25em -1.6em; vertical-align: middle;"';
             if (checked) {
               otp += " checked";
@@ -2614,6 +2614,24 @@ function completeHTMLDocument(
     .getText() as string;
   return text;
 }
+function wrapper(
+  text: string,
+  options: ConverterOptions,
+  globals: GlobalConverter
+): string {
+  text = globals.converter
+    ?._dispatch("wrapper.before", text, options, globals)
+    .getText() as string;
+  const className = options.classNmae;
+  const tx = options.jsx
+    ? `\n  <div className="${className}">\n${text}\n</div>\n`
+    : `\n    <div class="${className}">\n${text}\n</div>\n`;
+  text = tx;
+  text = globals.converter
+    ?._dispatch("wrapper.after", text, options, globals)
+    .getText() as string;
+  return text;
+}
 
 export {
   detab,
@@ -2628,4 +2646,5 @@ export {
   unhashHTMLSpans,
   unescapeSpecialChars,
   completeHTMLDocument,
+  wrapper,
 };

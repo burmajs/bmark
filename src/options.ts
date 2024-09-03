@@ -39,6 +39,7 @@ type BoolOpts = {
 };
 type StringOpts = {
   ghMentionsLink?: string;
+  classNmae?: string;
 };
 type NumOpts = {
   headerLevelStart?: number | string;
@@ -81,6 +82,7 @@ const defBoolOpts: BoolOpts = {
 
 const defStrOpts: StringOpts = {
   ghMentionsLink: "https://github.com/{u}",
+  classNmae: "bmark-markdown",
 };
 
 const defNumOpts: NumOpts = {
