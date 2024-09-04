@@ -14,6 +14,12 @@ import type { ConverterOptions } from "../options.js";
  * underscores as underlines. Otherwise, it will parse double and triple tilde
  * characters as underlines.
  *
+ * The regular expressions used here are designed to only match whole words, so
+ * that underscores within words are not replaced with `<u>` tags.
+ *
+ * After the replacement, any remaining underscores are escaped to prevent them
+ * being parsed by italic and bold.
+ *
  * @param text The text to parse
  * @param options The conversion options
  * @param globals The global converter state
@@ -25,20 +31,25 @@ export function underline(
 	globals: GlobalConverter,
 ): string {
 	if (!options.underline) {
+		// If underline parsing is disabled, return the input string
 		return text;
 	}
 
+	// Get the text after any pre-processing
 	text = globals.converter
 		?._dispatch("underline.before", text, options, globals)
 		.getText() as string;
 
+	// If underscores should be parsed as underlines
 	if (options.underscores) {
+		// Double and triple underscores are parsed as underlines
 		text = text.replace(
 			/\b___(\S[\s\S]*?)___\b/g,
 			(wm, txt) => `<u>${txt}</u>`,
 		);
 		text = text.replace(/\b__(\S[\s\S]*?)__\b/g, (wm, txt) => `<u>${txt}</u>`);
 	} else {
+		// Double and triple tilde characters are parsed as underlines
 		text = text.replace(/___(\S[\s\S]*?)___/g, (wm, m) =>
 			/\S$/.test(m) ? `<u>${m}</u>` : wm,
 		);
@@ -47,9 +58,10 @@ export function underline(
 		);
 	}
 
-	// escape remaining underscores to prevent them being parsed by italic and bold
+	// Escape any remaining underscores to prevent them being parsed by italic and bold
 	text = text.replace(/(_)/g, helpers.escapeCharactersCallback);
 
+	// Get the text after any post-processing
 	text = globals.converter
 		?._dispatch("underline.after", text, options, globals)
 		.getText() as string;

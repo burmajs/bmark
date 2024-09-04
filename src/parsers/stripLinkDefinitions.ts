@@ -54,7 +54,7 @@ export function stripLinkDefinitions(
 			// remove newlines
 			globals.gUrls[linkId] = url.replace(/\s/g, "");
 		} else {
-			url = helpers.applyBaseUrl(options.relativePathBaseUrl, url);
+			//url = helpers.applyBaseUrl(options.relativePathBaseUrl, url);
 
 			globals.gUrls[linkId] = encodeAmpsAndAngles(
 				url,
@@ -71,7 +71,7 @@ export function stripLinkDefinitions(
 		if (title) {
 			globals.gTitles[linkId] = title.replace(/"|'/g, "&quot;");
 		}
-		if (options.parseImgDimensions && width && height) {
+		if (width && height) {
 			globals.gDimensions[linkId] = {
 				width: width,
 				height: height,

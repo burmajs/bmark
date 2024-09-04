@@ -61,16 +61,16 @@ function spanGamut(
 	text = encodeAmpsAndAngles(text, options, globals);
 
 	// Do hard breaks
-	if (options.simpleLineBreaks) {
-		// GFM style hard breaks
-		// only add line breaks if the text does not contain a block (special case for lists)
-		if (!/\n\n¨K/.test(text)) {
-			text = text.replace(/\n+/g, "<br />\n");
-		}
-	} else {
-		// Vanilla hard breaks
-		text = text.replace(/ {2,}\n/g, "<br />\n");
+	// if (options.simpleLineBreaks) {
+	// GFM style hard breaks
+	// only add line breaks if the text does not contain a block (special case for lists)
+	if (!/\n\n¨K/.test(text)) {
+		text = text.replace(/\n+/g, "<br />\n");
 	}
+	// } else {
+	// Vanilla hard breaks
+	// text = text.replace(/ {2,}\n/g, "<br />\n");
+	//}
 
 	text = globals.converter
 		?._dispatch("spanGamut.after", text, options, globals)

@@ -1,171 +1,61 @@
-import { type ShowdownExtension } from "./extensions.js";
+import type { ShowdownExtension } from "./extensions.js";
 type ExtType = Array<
-  | (() => ShowdownExtension[] | ShowdownExtension)
-  | ShowdownExtension[]
-  | ShowdownExtension
-  | string
+	| (() => ShowdownExtension[] | ShowdownExtension)
+	| ShowdownExtension[]
+	| ShowdownExtension
+	| string
 >;
-type BoolOpts = {
-  [key: string]: boolean | string | ExtType | number | HTMLOpts | undefined;
-  underscores?: boolean;
-  strikethrough?: boolean;
-  underline?: boolean;
-  omitCodeBlocks?: boolean;
-  backslashEscapesHTMLTags?: boolean;
-  relativePathBaseUrl?: boolean;
-  openLinksInNewWindow?: boolean;
-  ghMentions?: boolean;
-  encodeEmails?: boolean;
-  simplifiedAutoLink?: boolean;
-  simpleLineBreaks?: boolean;
-  smoothLivePreview?: boolean;
-  noHeaderId?: boolean;
-  requireSpaceBeforeHeadingText?: boolean;
-  customizedHeaderId?: boolean;
-  prefixHeaderId?: boolean;
-  rawPrefixHeaderId?: boolean;
-  ghCompatibleHeaderId?: boolean;
-  rawHeaderId?: boolean;
-  tables?: boolean;
-  tablesHeaderId?: boolean;
-  splitAdjacentBlockquotes?: boolean;
-  disableForced4SpacesIndentedSublists?: boolean;
-  tasklists?: boolean;
-  moreStyling?: boolean;
-  parseImgDimensions?: boolean;
-  jsx?: boolean;
-};
-type StringOpts = {
-  ghMentionsLink?: string;
-  classNmae?: string;
-};
-type NumOpts = {
-  headerLevelStart?: number | string;
-};
-type ExtOpts = {
-  extensions?: ExtType;
-};
-type HTMLOpts = {
-  lang?: string;
-  title?: string;
-  cssLinks?: string[];
-  /**
-   * Only .ico type
-   */
-  favicon?: string;
-  metaTags?: Array<{
-    name: string;
-    content: string;
-  }>;
-  scriptTags?: {
-    head?: {
-      scriptNormalTags?: string[];
-      scriptModuleTags?: string[];
-    };
-    body?: {
-      scriptNormalTags?: string[];
-      scriptModuleTags?: string[];
-    };
-  };
-};
-type HtmlOpts = {
-  htmlDocument?: HTMLOpts;
-};
-export type ConverterOptions = BoolOpts &
-  StringOpts &
-  NumOpts &
-  ExtOpts &
-  HtmlOpts;
-const defBoolOpts: BoolOpts = {
-  underscores: false,
-  strikethrough: false,
-  underline: false,
-  omitCodeBlocks: false,
-  backslashEscapesHTMLTags: false,
-  relativePathBaseUrl: false,
-  openLinksInNewWindow: false,
-  ghMentions: false,
-  encodeEmails: true,
-  simplifiedAutoLink: true,
-  simpleLineBreaks: false,
-  smoothLivePreview: false,
-  noHeaderId: false,
-  requireSpaceBeforeHeadingText: false,
-  customizedHeaderId: false,
-  prefixHeaderId: false,
-  rawPrefixHeaderId: false,
-  ghCompatibleHeaderId: false,
-  rawHeaderId: false,
-  tables: true,
-  tablesHeaderId: false,
-  splitAdjacentBlockquotes: false,
-  disableForced4SpacesIndentedSublists: false,
-  tasklists: false,
-  moreStyling: false,
-  parseImgDimensions: false,
-  jsx: false,
-};
+export type CoverterOptsValues =
+	| boolean
+	| string
+	| ExtType
+	| number
+	| undefined;
 
-const defStrOpts: StringOpts = {
-  ghMentionsLink: "https://github.com/{u}",
-  classNmae: "bmark-markdown",
-};
-
-const defNumOpts: NumOpts = {
-  headerLevelStart: 1,
-};
-
-const defExtOpts: ExtOpts = {
-  extensions: [],
-};
-
-const defHtmlOpts: HtmlOpts = {
-  htmlDocument: {
-    lang: "",
-    title: "",
-    cssLinks: [],
-    favicon: "",
-    metaTags: [
-      {
-        name: "",
-        content: "",
-      },
-    ],
-    scriptTags: {
-      head: {
-        scriptNormalTags: [],
-        scriptModuleTags: [],
-      },
-      body: {
-        scriptNormalTags: [],
-        scriptModuleTags: [],
-      },
-    },
-  },
+export type OptionsName =
+	| "anchorLinkTarget"
+	| "underscores"
+	| "underline"
+	| "jsx"
+	| "ghMentionsLink"
+	| "classNmae"
+	| "extensions";
+export type ConverterObjects =
+	| {
+			name: "anchorLinkTarget";
+			value: "_blank" | "_parent" | "_self" | "_top";
+	  }
+	| { name: "underscores"; value: boolean }
+	| { name: "underline"; value: boolean }
+	| { name: "jsx"; value: boolean }
+	| { name: "ghMentionsLink"; value: string }
+	| { name: "classNmae"; value: string }
+	| { name: "extensions"; value: ExtType };
+export type ConverterOptions = {
+	[key: string]: CoverterOptsValues;
+	anchorLinkTarget?: "_blank" | "_parent" | "_self" | "_top";
+	underscores?: boolean;
+	underline?: boolean;
+	jsx?: boolean;
+	ghMentionsLink?: string;
+	classNmae?: string;
+	extensions?: ExtType;
 };
 
 const defaultOptions: ConverterOptions = {
-  ...defBoolOpts,
-  ...defStrOpts,
-  ...defNumOpts,
-  ...defExtOpts,
-  ...defHtmlOpts,
+	ghMentionsLink: "https://github.com/{u}",
+	classNmae: "bmark-markdown",
+	anchorLinkTarget: "_self",
+	underscores: false,
+	underline: true,
+	extensions: [],
+	jsx: false,
 };
 export function getDefaultOptions(): ConverterOptions {
-  return defaultOptions;
+	return defaultOptions;
 }
 
 export function setDefaultOptions(options: ConverterOptions): ConverterOptions {
-  const opts = getDefaultOptions();
-  return (options = opts);
-}
-
-export function setAllOptionsOn(): ConverterOptions {
-  let retOpts: BoolOpts = {};
-  for (let opt in defBoolOpts) {
-    if (defBoolOpts.hasOwnProperty(opt)) {
-      retOpts[opt] = true;
-    }
-  }
-  return { ...retOpts, ...defStrOpts, ...defNumOpts, ...defExtOpts };
+	const opts = getDefaultOptions();
+	return (options = opts);
 }

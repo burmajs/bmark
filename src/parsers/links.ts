@@ -112,9 +112,9 @@ function writeAnchorTag({
 		);
 		title = ` title="${title}"`;
 	}
-
-	if (options.openLinksInNewWindow && !/^#/.test(url)) {
-		target = ' rel="noopener noreferrer" target="_blank"';
+	const tg = options.anchorLinkTarget ?? "";
+	if (!/^#/.test(url)) {
+		target = `rel="noopener noreferrer" target="${tg}"`;
 	}
 	text = codeSpans(text, options, globals);
 	text = emoji(text, options, globals);
@@ -218,7 +218,7 @@ function replaceAnchorTagBaseUrl({
 		m5?: any,
 		m6?: any,
 	) => {
-		url = helpers.applyBaseUrl(options.relativePathBaseUrl, url);
+		//url = helpers.applyBaseUrl(options.relativePathBaseUrl, url);
 
 		const evt = createEvent(
 			rgx,
@@ -280,12 +280,12 @@ function linksAngleBrackets(
 	text = text.replace(mailRegx, (wholeMatch: string, mail: string) => {
 		let url = "mailto:";
 		mail = unescapeSpecialChars(mail, options, globals);
-		if (options.encodeEmails) {
-			url = helpers.encodeEmailAddress(url + mail);
-			mail = helpers.encodeEmailAddress(mail);
-		} else {
-			url = url + mail;
-		}
+		//if (options.encodeEmails) {
+		url = helpers.encodeEmailAddress(url + mail);
+		mail = helpers.encodeEmailAddress(mail);
+		//} else {
+		//url = url + mail;
+		//}
 		const evt = createEvent(
 			mailRegx,
 			`${evtRootName}.captureStart`,
@@ -465,9 +465,6 @@ function linksGhMentions(
 	globals: GlobalConverter,
 ): string {
 	const evtRootName: string = "links.ghMentions";
-	if (!options.ghMentions) {
-		return text;
-	}
 	text = globals.converter
 		?._dispatch(`${evtRootName}.start`, text, options, globals)
 		.getText() as string;
@@ -487,9 +484,6 @@ function linksGhMentions(
 			if (escape === "\\") {
 				return st + mentions;
 			}
-
-			// check if options.ghMentionsLink is a string
-			// TODO Validation should be done at initialization not at runtime
 			if (typeof options.ghMentionsLink !== "string") {
 				throw new Error("ghMentionsLink option must be a string");
 			}
@@ -505,7 +499,6 @@ function linksGhMentions(
 				options,
 				globals,
 			);
-			// captureEnd Event is triggered inside writeAnchorTag function
 			return (
 				st + writeAnchorTag({ evt: evt, options: options, globals: globals })
 			);
@@ -537,12 +530,8 @@ function linksNaked(
 	text = globals.converter
 		?._dispatch(`${evtRootName}.start`, text, options, globals)
 		.getText() as string;
-
-	// 2. Now we check for
-	// we also include leading markdown magic chars [_*~] for cases like __https://www.google.com/foobar__
 	const urlRgx =
 		/([_*~]*?)(((?:https?|ftp):\/\/|www\.)[^\s<>"'`´.-][^\s<>"'`´]*?\.[a-z\d.]+[^\s<>"']*)\1/gi;
-
 	text = text.replace(
 		urlRgx,
 		(
@@ -551,64 +540,44 @@ function linksNaked(
 			url: string,
 			urlPrefix: string,
 		) => {
-			// we now will start traversing the url from the front to back, looking for punctuation chars [_*~,;:.!?\)\]]
 			const len = url.length;
 			let suffix = "";
 			for (let i = len - 1; i >= 0; --i) {
 				const char = url.charAt(i);
 
 				if (/[_*~,;:.!?]/.test(char)) {
-					// it's a punctuation char
-					// we remove it from the url
 					url = url.slice(0, -1);
-					// and prepend it to the suffix
 					suffix = char + suffix;
 				} else if (/\)/.test(char)) {
 					const opPar = url.match(/\(/g) || [];
 					const clPar = url.match(/\)/g) as RegExpMatchArray;
-
-					// it's a curved parenthesis so we need to check for "balance" (kinda)
 					if (opPar.length < clPar.length) {
-						// there are more closing Parenthesis than opening so chop it!!!!!
 						url = url.slice(0, -1);
-						// and prepend it to the suffix
 						suffix = char + suffix;
 					} else {
-						// it's (kinda) balanced so our work is done
 						break;
 					}
 				} else if (/]/.test(char)) {
 					const opPar2 = url.match(/\[/g) || [];
 					const clPar2 = url.match(/\]/g) as RegExpMatchArray;
-					// it's a squared parenthesis so we need to check for "balance" (kinda)
 					if (opPar2.length < clPar2.length) {
-						// there are more closing Parenthesis than opening so chop it!!!!!
 						url = url.slice(0, -1);
-						// and prepend it to the suffix
 						suffix = char + suffix;
 					} else {
-						// it's (kinda) balanced so our work is done
 						break;
 					}
 				} else {
-					// it's not a punctuation or a parenthesis so our work is done
 					break;
 				}
 			}
 
-			// we copy the treated url to the text variable
 			let text = url;
-			// finally, if it's a www shortcut, we prepend http
-			url = urlPrefix === "www." ? `http://${url}` : url;
 
-			// url part is done so let's take care of text now
-			// we need to escape the text (because of links such as www.example.com/foo__bar__baz)
+			url = urlPrefix === "www." ? `http://${url}` : url;
 			text = text.replace(
 				helpers.regexes.asteriskDashTildeAndColon,
 				helpers.escapeCharactersCallback,
 			);
-
-			// finally we dispatch the event
 			const evt = createEvent(
 				urlRgx,
 				`${evtRootName}.captureStart`,
@@ -620,9 +589,6 @@ function linksNaked(
 				options,
 				globals,
 			);
-
-			// and return the link tag, with the leadingMDChars and  suffix. The leadingMDChars are added at the end too because
-			// we consumed those characters in the regexp
 			return (
 				leadingMDChars +
 				writeAnchorTag({ evt: evt, options: options, globals: globals }) +
@@ -638,12 +604,10 @@ function linksNaked(
 		(wholeMatch: string, leadingChar: string, mail: string) => {
 			let url = "mailto:";
 			mail = unescapeSpecialChars(mail, options, globals);
-			if (options.encodeEmails) {
-				url = helpers.encodeEmailAddress(url + mail);
-				mail = helpers.encodeEmailAddress(mail);
-			} else {
-				url = url + mail;
-			}
+
+			url = helpers.encodeEmailAddress(url + mail);
+			mail = helpers.encodeEmailAddress(mail);
+
 			const evt = createEvent(
 				mailRgx,
 				`${evtRootName}.captureStart`,

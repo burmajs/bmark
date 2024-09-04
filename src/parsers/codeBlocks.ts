@@ -32,15 +32,15 @@ function codeBlocks(
 	text = text.replace(pattern, (wholeMatch, m1, m2) => {
 		let codeblock = m1;
 		const nextChar = m2;
-		let end = "\n";
+		const end = "\n";
 		codeblock = outdent(codeblock, options, globals);
 		codeblock = encodeCode(codeblock, options, globals);
 		codeblock = detab(codeblock, options, globals);
 		codeblock = codeblock.replace(/^\n+/g, ""); // trim leading newlines
 		codeblock = codeblock.replace(/\n+$/g, ""); // trim trailing newlines
-		if (options.omitCodeBlocks) {
-			end = "";
-		}
+		// if (options.omitCodeBlocks) {
+		//   end = "";
+		// }
 		codeblock = `<pre><code>${codeblock}${end}</code></pre>`;
 		return `${hashBlock(codeblock, options, globals)}${nextChar}`;
 	});
@@ -176,7 +176,7 @@ function githubCodeBlocks(
 	const pattern =
 		/(?:^|\n) {0,3}(```+|~~~+) *([^\n\t`~]*)\n([\s\S]*?)\n {0,3}\1/g;
 	text = text.replace(pattern, (wholeMatch, delim, language, codeblock) => {
-		const end = options.omitCodeBlocks ? "" : "\n";
+		const end = "\n";
 		language = language.trim().split(" ")[0];
 		codeblock = encodeCode(codeblock, options, globals);
 		codeblock = detab(codeblock, options, globals);

@@ -65,8 +65,6 @@ function images(
 		m5: any,
 		title: string,
 	) {
-		url = helpers.applyBaseUrl(options.relativePathBaseUrl, url);
-
 		return writeImageTag(
 			wholeMatch,
 			altText,
@@ -98,12 +96,10 @@ function images(
 		if (!title) {
 			title = "";
 		}
-		// Special case for explicit empty url
 		if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) {
 			url = "";
 		} else if (url === "" || url === null) {
 			if (linkId === "" || linkId === null) {
-				// lower-case and turn embedded newlines into spaces
 				linkId = altText.toLowerCase().replace(/ ?\n/g, " ");
 			}
 			url = `#${linkId}`;
@@ -124,12 +120,10 @@ function images(
 
 		altText = altText
 			.replace(/"/g, "&quot;")
-			//altText = showdown.helper.escapeCharacters(altText, '*_', false);
 			.replace(
 				helpers.regexes.asteriskDashTildeAndColon,
 				helpers.escapeCharactersCallback,
 			);
-		//url = showdown.helper.escapeCharacters(url, '*_', false);
 		url = url.replace(
 			helpers.regexes.asteriskDashTildeAndColon,
 			helpers.escapeCharactersCallback,
@@ -139,7 +133,6 @@ function images(
 		if (title && typeof title === "string") {
 			title = title
 				.replace(/"/g, "&quot;")
-				//title = showdown.helper.escapeCharacters(title, '*_', false);
 				.replace(
 					helpers.regexes.asteriskDashTildeAndColon,
 					helpers.escapeCharactersCallback,

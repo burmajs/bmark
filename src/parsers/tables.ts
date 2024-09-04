@@ -16,10 +16,6 @@ function tables(
 	options: ConverterOptions,
 	globals: GlobalConverter,
 ): string {
-	if (!options.tables) {
-		return text;
-	}
-
 	/**
 	 * Table regex will match the following:
 	 *
@@ -75,13 +71,13 @@ function tables(
 	 * @param   {string}  style   The style string.
 	 * @returns {string}  The parsed header.
 	 */
-	function parseHeaders(header: string, style: string) {
+	function parseHeaders(header: string, style: string): string {
 		let id = "";
 		header = header.trim();
 		// support both tablesHeaderId and tableHeaderId due to error in documentation so we don't break backwards compatibility
-		if (options.tablesHeaderId || options.tablesHeaderId) {
-			id = `id="${header.replace(/ /g, "_").toLowerCase()}"`;
-		}
+		//if (options.tablesHeaderId || options.tablesHeaderId) {
+		id = `id="${header.replace(/ /g, "_").toLowerCase()}"`;
+		//}
 		header = spanGamut(header, options, globals);
 
 		return `<th ${id} ${style}>${header}</th>\n`;
@@ -93,7 +89,7 @@ function tables(
 	 * @param   {string}  style   The style string.
 	 * @returns {string}  The parsed cell.
 	 */
-	function parseCells(cell: string, style: string) {
+	function parseCells(cell: string, style: string): string {
 		const subText = spanGamut(cell, options, globals);
 		return `<td ${style}>${subText}</td>\n`;
 	}
