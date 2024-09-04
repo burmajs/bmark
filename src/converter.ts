@@ -6,22 +6,8 @@ import type { GlobalConverter } from "./globals.js";
 import { helpers } from "./helpers.js";
 import { bmark } from "./index.js";
 import { type ConverterOptions, getDefaultOptions } from "./options.js";
-import {
-  blockGamut,
-  completeHTMLDocument,
-  detab,
-  githubCodeBlocks,
-  hashCodeTags,
-  hashHTMLBlocks,
-  hashPreCodeTags,
-  metadata,
-  runExtension,
-  stripLinkDefinitions,
-  unescapeSpecialChars,
-  unhashHTMLSpans,
-  wrapper,
-} from "./parsers.js";
 import { validate } from "./validate.js";
+import { markdownParser } from "./parsers/index.js";
 type Listeners = {
   [name: string]: any;
 };
@@ -220,98 +206,21 @@ export class Converter {
     const fm: FrontMatterResult<T> = new Frontmatter(text);
     const data: T = fm.data;
     text = fm.content;
-    // This lets us use ¨ trema as an escape char to avoid md5 hashes
-    // The choice of character is arbitrary; anything that isn't
-    // magic in Markdown will work.
-    text = text.replace(/¨/g, "¨T");
-    // Replace $ with ¨D
-    // RegExp interprets $ as a special character
-    // when it's in a replacement string
-    text = text.replace(/\$/g, "¨D");
-
-    // Standardize line endings
-    text = text.replace(/\r\n/g, "\n"); // DOS to Unix
-    text = text.replace(/\r/g, "\n"); // Mac to Unix
-
-    // Stardardize line spaces
-    text = text.replace(/\u00A0/g, "&nbsp;");
-    if (this.options.smartIndentationFix) {
-      text = rTrimInputText(text);
-    }
-    // Make sure text begins and ends with a couple of newlines:
-    text = `\n\n${text}\n\n`;
-
-    // detab
-    //$$$
-    text = detab(text, this.options, globals);
-
-    /**
-     * Strip any lines consisting only of spaces and tabs.
-     * This makes subsequent regexs easier to write, because we can
-     * match consecutive blank lines with /\n+/ instead of something
-     * contorted like /[ \t]*\n+/
-     */
-    text = text.replace(/^[ \t]+$/gm, "");
-    //run languageExtensions
-    helpers.forEach(this.langExtensions, (ext: any) => {
-      //$$$
-      text = runExtension(text, this.options, globals, ext);
-    });
-    // run the sub parsers
-    //$$$
-    text = metadata(text, this.options, globals);
-    //$$$
-    text = hashPreCodeTags(text, this.options, globals);
-    //$$$
-    text = githubCodeBlocks(text, this.options, globals);
-    //$$$
-    text = hashHTMLBlocks(text, this.options, globals);
-    //$$$
-    text = hashCodeTags(text, this.options, globals);
-    //$$$
-    text = stripLinkDefinitions(text, this.options, globals);
-    //$$$
-    text = blockGamut(text, this.options, globals);
-    text = unhashHTMLSpans(text, this.options, globals);
-    text = unescapeSpecialChars(text, this.options, globals);
-    // attacklab: Restore dollar signs
-    text = text.replace(/¨D/g, "$$");
-
-    // attacklab: Restore tremas
-    text = text.replace(/¨T/g, "¨");
-    text = wrapper(text, this.options, globals);
-    // render a complete html document instead of a partial if the option is enabled
-    text = completeHTMLDocument(text, this.options, globals);
-
-    // Run output modifiers
-    helpers.forEach(this.outputModifiers, (ext: any) => {
-      text = runExtension(text, this.options, globals, ext);
-    });
-
-    // update metadata
-    this.metadata = globals.metadata;
+    text = markdownParser(
+      text,
+      this.options,
+      globals,
+      this.langExtensions,
+      this.outputModifiers
+    );
     return text;
   }
-  /**
-   * Sets a converter option.
-   * @param {string} key - The option key.
-   * @param {*} value - The value to set.
-   */
   setOption(key: string, value: any): void {
     this.options[key] = value;
   }
-  /**
-   * Returns the value of a given option.
-   * @param {string} key - The option key.
-   * @return {*} The value of the given option.
-   */
   getOption(key: string) {
     return this.options[key];
   }
-  /**
-   * Returns the current converter options.
-   * @return {ConverterOptions} The converter options.
-   */
   getOptions(): ConverterOptions {
     return this.options;
   }
@@ -360,9 +269,3 @@ export class Converter {
   }
 }
 
-function rTrimInputText(text: string): string {
-  const leadingWhitespaceMatch = text.match(/^\s*/) as RegExpMatchArray;
-  const rsp = leadingWhitespaceMatch[0].length;
-  const rgx = new RegExp(`^\\s{0,${rsp}}`, "gm");
-  return text.replace(rgx, "");
-}

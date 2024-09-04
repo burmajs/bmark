@@ -6,11 +6,10 @@ type ExtType = Array<
   | string
 >;
 type BoolOpts = {
-  [key: string]: boolean | string | ExtType | number | undefined;
+  [key: string]: boolean | string | ExtType | number | HTMLOpts | undefined;
   underscores?: boolean;
   strikethrough?: boolean;
   underline?: boolean;
-  metadata?: boolean;
   omitCodeBlocks?: boolean;
   backslashEscapesHTMLTags?: boolean;
   relativePathBaseUrl?: boolean;
@@ -34,7 +33,6 @@ type BoolOpts = {
   tasklists?: boolean;
   moreStyling?: boolean;
   parseImgDimensions?: boolean;
-  completeHTMLDocument?: boolean;
   jsx?: boolean;
 };
 type StringOpts = {
@@ -47,12 +45,41 @@ type NumOpts = {
 type ExtOpts = {
   extensions?: ExtType;
 };
-export type ConverterOptions = BoolOpts & StringOpts & NumOpts & ExtOpts;
+type HTMLOpts = {
+  lang?: string;
+  title?: string;
+  cssLinks?: string[];
+  /**
+   * Only .ico type
+   */
+  favicon?: string;
+  metaTags?: Array<{
+    name: string;
+    content: string;
+  }>;
+  scriptTags?: {
+    head?: {
+      scriptNormalTags?: string[];
+      scriptModuleTags?: string[];
+    };
+    body?: {
+      scriptNormalTags?: string[];
+      scriptModuleTags?: string[];
+    };
+  };
+};
+type HtmlOpts = {
+  htmlDocument?: HTMLOpts;
+};
+export type ConverterOptions = BoolOpts &
+  StringOpts &
+  NumOpts &
+  ExtOpts &
+  HtmlOpts;
 const defBoolOpts: BoolOpts = {
   underscores: false,
   strikethrough: false,
   underline: false,
-  metadata: false,
   omitCodeBlocks: false,
   backslashEscapesHTMLTags: false,
   relativePathBaseUrl: false,
@@ -76,7 +103,6 @@ const defBoolOpts: BoolOpts = {
   tasklists: false,
   moreStyling: false,
   parseImgDimensions: false,
-  completeHTMLDocument: false,
   jsx: false,
 };
 
@@ -93,11 +119,37 @@ const defExtOpts: ExtOpts = {
   extensions: [],
 };
 
+const defHtmlOpts: HtmlOpts = {
+  htmlDocument: {
+    lang: "",
+    title: "",
+    cssLinks: [],
+    favicon: "",
+    metaTags: [
+      {
+        name: "",
+        content: "",
+      },
+    ],
+    scriptTags: {
+      head: {
+        scriptNormalTags: [],
+        scriptModuleTags: [],
+      },
+      body: {
+        scriptNormalTags: [],
+        scriptModuleTags: [],
+      },
+    },
+  },
+};
+
 const defaultOptions: ConverterOptions = {
   ...defBoolOpts,
   ...defStrOpts,
   ...defNumOpts,
   ...defExtOpts,
+  ...defHtmlOpts,
 };
 export function getDefaultOptions(): ConverterOptions {
   return defaultOptions;

@@ -1,7 +1,7 @@
 import { bmark } from "./src/index.js";
 import fs from "fs";
 const a = new bmark.Converter({
-  completeHTMLDocument: true,
+  tables: true,
 });
 const aa = fs.readFileSync("./notes/leapyear.md", "utf8");
 const b = a.toHtml(aa);

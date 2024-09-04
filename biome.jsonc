@@ -13,7 +13,9 @@
       "suspicious": {
         "noConfusingVoidType": "off",
         "noExplicitAny": "off",
-        "noPrototypeBuiltins": "off"
+        "noPrototypeBuiltins": "off",
+        "noAssignInExpressions": "off",
+        "noShadowRestrictedNames": "off"
       },
       "style": {
         "useShorthandFunctionType": "off",
