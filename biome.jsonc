@@ -15,7 +15,12 @@
         "noExplicitAny": "off",
         "noPrototypeBuiltins": "off",
         "noAssignInExpressions": "off",
-        "noShadowRestrictedNames": "off"
+        "noShadowRestrictedNames": "off",
+        "noImplicitAnyLet": "off",
+        "noControlCharactersInRegex": "off"
+      },
+      "complexity": {
+        "noBannedTypes": "off"
       },
       "style": {
         "useShorthandFunctionType": "off",
